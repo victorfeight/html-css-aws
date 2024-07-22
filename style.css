@@ -1,0 +1,73 @@
+body{
+    padding: 0;
+    margin: 0;
+}
+header {
+    background-color: #006699;
+    height: 100px;
+    color: #ffffff;
+}
+.logo {
+    width: 100px;
+    float: left;
+    padding-right: 20px;
+}
+footer {
+    background-color: #006699;
+    height: 50px;
+    color: #ffffff;
+    padding-top: 4px;
+}
+
+nav {
+    float: left;
+    padding: 27px 0 0 40px;
+
+}
+
+.pageTitle {
+    font-size: 28px;
+    font-weight: bold;
+    float: left;
+}
+
+
+.hover-div ul {
+  list-style: none; /* Removing default list styling */
+  margin: 0; /* Setting margin to 0 */
+  padding: 0; /* Setting padding to 0 */
+  overflow: hidden; /* Hiding any overflowing content */
+}
+
+.hover-div li {
+  float: left; /* Making list items float to align horizontally */
+}
+
+.hover-div li a {
+  position: relative; /* Setting position to relative for positioning pseudo-element */
+  display: block; /* Displaying links as block-level elements for proper styling */
+  color: #fff; /* Setting text color to white */
+  text-align: center; /* Centering text horizontally */
+  padding: 8px 12px; /* Setting padding for the links */
+  text-decoration: none; /* Removing underline from links */
+  z-index: 0; /* Setting z-index to 0 for stacking context */
+}
+
+li a:before {
+  position: absolute; /* Setting position to absolute for positioning */
+  content: ""; /* Empty content property to generate pseudo-element */
+  width: 100%; /* Setting width to cover the entire link */
+  height: 100%; /* Setting height to cover the entire link */
+  bottom: 0; /* Aligning pseudo-element at the bottom of the link */
+  left: 0; /* Aligning pseudo-element at the left of the link */
+  background-color: #F68026; /* Setting background color for the pseudo-element */
+  z-index: -1; /* Setting negative z-index to position below the link */
+  transform: scale(0); /* Initially scaling the pseudo-element to 0 */
+  transition: transform 0.5s ease-in-out; /* Adding transition effect for smooth scaling */
+}
+
+li a:hover:before, /* CSS rule for pseudo-element before links on hover */
+li a:focus:before { /* CSS rule for pseudo-element before links on focus */
+  transform: scale(1); /* Scaling the pseudo-element to 1 on hover/focus */
+}
+
