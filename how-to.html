@@ -2,14 +2,14 @@
 <html lang="en">
 <head>
 <meta charset=utf-8>
-<title>AWS S3</title>
+<title>Amazon Bedrock</title>
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
 <header>
 <img class="logo" src="https://d1.awsstatic.com/uki-digital-marketing-content-directory/AWS%20logo.884800f1674e960b6134af7340ac45ab21d99682.png" alt="logo">
-<p class="pageTitle">Simple Storage Service (S3)</p>
-<nav class="hover-div">
+<p class="pageTitle">Amazon Bedrock</p>
+<nav class="hover-div header-nav">
 <ul>
 <li><a href="index.html">Home</a></li>
 <li><a href="use-cases.html">Use Cases</a></li>
@@ -19,17 +19,79 @@
 </header>
 <section>
 <h2>Getting Started</h2>
-<p>Amazon Simple Storage Service (Amazon S3) is an object storage service offering industry-leading scalability, data availability, security, and performance. Millions of customers of all sizes and industries store, manage, analyze, and protect any amount of data for virtually any use case, such as data lakes, cloud-native applications, and mobile apps. With cost-effective storage classes and easy-to-use management features, you can optimize costs, organize and analyze data, and configure fine-tuned access controls to meet specific business and compliance requirements.
-</p>
-<img src="s3-how-to.png" alt="S3">
-<h2>Using S3</h2>
+<h3>Create an AI Chatbot with AWS Bedrock</h3>
+
 <ol>
-    <li>This step is this</li>
-    <li>This do this step</li>
-    <li>For this field, enter that</li>
-    <li>Set the security this way</li>
-    <li>Test by clicking on there.</li>
+    <li id="cfn">Download this CloudFormation template <a href="https://static.us-east-1.prod.workshops.aws/public/510b26bd-5dce-430c-b8fe-396164486776/static/cf.yml">cf.yaml</a></li>
+    <li>Install the Cloudformation template with the command: 
+        <code> 
+        aws cloudformation create-stack --stack-name bedrock-workshop --capabilities CAPABILITY_NAMED_IAM --template-body file://cf.yml --tags Key=Name,Value=BedrockWorkshop --region &lt;AWS REGION&gt;
+        </code>
+    </li>
+    <li>It takes approximately 30 minutes for the CloudFormation stack to be successfully created. Wait for this to happen, then move on to the Initial Configuration section.</li>
 </ol>
+
+
+<h3>Initial Configuration</h2>
+
+    <p>Amazon Bedrock offers a choice of high-performing foundation models (FMs) from leading AI companies like AI21 Labs, Anthropic, Cohere, Meta, Stability AI, and Amazon. We will use Jurrasic-2 Ultra.
+    </p>
+    <ol>
+        <li>Start by opening the AWS Console and navigating to a region that supports Bedrock. The recommended AWS regions are us-west-2 and us-east-1.</li>
+        <li>Navigate to the Bedrock Service->Model access->Enable specific models</li>
+        <img src="https://static.us-east-1.prod.workshops.aws/public/510b26bd-5dce-430c-b8fe-396164486776/static/model_access.png" alt="model_access" width="800", height="600">
+        <li>Request access for Jurassic-2 Ultra</li>
+        <li>Now, navigate to Amazon Sagemaker in the AWS Console</li>
+        <li>From the navigation pane on the left, select Studio. Under Get Started, select BedrockWorkshop as the domain and bedrockworkshop as the user profile. Click on the Open Studio button to continue. navigate into SageMaker Studio.</li>
+        <img src="https://static.us-east-1.prod.workshops.aws/public/510b26bd-5dce-430c-b8fe-396164486776/static/sagemaker_studio_1.png" alt="model_access" width="800", height="600">
+        <li>In SageMaker Studio, select JupyterLab, then click on the Run button for BedrockWorkshopSpace. Wait for the status of the space to become Running, then click on the Open button to continue. This launches JupyterLab in a separate browser tab.</li>
+        <img src="https://static.us-east-1.prod.workshops.aws/public/510b26bd-5dce-430c-b8fe-396164486776/static/JupyterLab.png" alt="model_access" width="800", height="600">
+        <li>In JupyterLab, use the File -> New -> Notebook menu to create a new Jupyter notebook. In the Select Kernel popup window, select Python 3 (ipykernel) to proceed. By default, this will create an untitled notebook. You can right click on the untitled file to change the filename.</li>
+        <img src="https://static.us-east-1.prod.workshops.aws/public/510b26bd-5dce-430c-b8fe-396164486776/static/JupyterNotebook.png" alt="model_access" width="800", height="600">
+        <li>Upgrade boto3 to the latest version and install require dependencies.</li>
+    <pre>
+!pip install boto3 --upgrade
+!pip install Pillow --upgrade
+!pip install numpy --upgrade
+!pip install pandas --upgrade
+!pip install scikit-learn --upgrade
+!pip install psycopg2-binary --upgrade
+!pip install requests --upgrade
+!pip install requests_aws4auth --upgrade
+!pip install pinecone-client --upgrade
+!pip install threadpoolctl==3.1.0
+!pip install numexpr==2.8.4
+!pip install bottleneck==1.3.6
+!pip install seaborn
+
+    </pre>
+    <li>If everything installs correctly, we should now be able to run models from Bedrock. Run the following code to ask the Chatbot a question.</li>
+    <pre>
+import json
+import boto3
+
+prompt = """
+Explain what general relativity is to an 8 year old.
+"""
+
+model_id = 'ai21.j2-ultra'
+bedrock = boto3.client(service_name='bedrock-runtime')
+message = {"role": "user", "content": [{"text": prompt}]}
+messages = [message]
+inference_config = {"temperature": 0.5, "topP": 0.9, "maxTokens": 500}
+response = bedrock.converse(
+    modelId=model_id,
+    messages=messages,
+    inferenceConfig=inference_config
+)
+content = response['output']['message']['content']
+for item in content:
+    print(item['text'])
+    
+        
+    </pre>
+    
+    </ol>    
 </section>
 <footer>
 <p>&copy;Amazon Web Services</p>
